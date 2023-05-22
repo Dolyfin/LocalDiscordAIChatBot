@@ -16,8 +16,9 @@ def initialize():
         with open(env_file_path, "a+") as env_file:
             existing_variable_list = []
             for existing_variable in env_file:
-                existing_variable_list.append(existing_variable.replace("=", ""))
+                existing_variable_list.append(existing_variable)
             for variable_string in env_variables_list:
                 if variable_string not in existing_variable_list:
                     env_file.write(variable_string + "=\n")
+
 
