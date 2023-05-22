@@ -22,3 +22,4 @@ def initialize():
                     env_file.write(variable_string + "=\n")
 
 
+initialize()
