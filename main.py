@@ -1,9 +1,11 @@
 import discord
 import dotenv
 import os
+from os import getenv
 
 bot = discord.Bot()
 dotenv.load_dotenv()
+
 
 def initialize():
     print("<?> Initializing bot...")
@@ -35,12 +37,20 @@ def initialize():
             env_file.writelines(env_file_lines)
 
 
+
 @bot.event
 async def on_ready():
     print(f"<?> Bot connected to discord as {bot.user}!")
     bot_guilds_list = [str(guild) for guild in bot.guilds]
     print(f"<?> In {len(bot_guilds_list)} Servers: {', '.join(bot_guilds_list)}")
 
-initialize()
-bot.run(os.getenv("DISCORD_BOT_TOKEN"))
 
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    pass
+    #
+
+initialize()
+bot.run(getenv("DISCORD_BOT_TOKEN"))
