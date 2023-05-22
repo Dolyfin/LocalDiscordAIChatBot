@@ -6,11 +6,12 @@ from os import getenv
 bot = discord.Bot()
 dotenv.load_dotenv()
 
+env_file_path = ".env"
+env_variables_list = ["DISCORD_BOT_TOKEN", "IMAGE_GEN_IP", "TEXT_GEN_IP"]
+
 
 def initialize():
     print("<?> Initializing bot...")
-    env_variables_list = ["DISCORD_BOT_TOKEN", "IMAGE_GEN_IP", "TEXT_GEN_IP"]
-    env_file_path = ".env"
 
     if not os.path.isfile(env_file_path):
         print("<?> '.env' not found. Creating new '.env' file with necessary variables.")
@@ -37,6 +38,23 @@ def initialize():
             env_file.writelines(env_file_lines)
 
 
+async def change_env_var(env_var, new_value):
+    change_completed = False
+    with open(env_file_path, "r") as env_file:
+        env_rows = env_file.readlines()
+
+    with open(env_file_path, "w") as env_file:
+        env_file_lines = []
+        for var_row in env_rows:
+            var_row_name = var_row.split("=")[0].strip()
+            if var_row_name == env_var:
+                env_file_lines = var_row_name + "=" + new_value
+                change_completed = True
+            else:
+                env_file_lines = var_row
+        env_file.writelines(env_file_lines)
+    return change_completed
+
 
 @bot.event
 async def on_ready():
@@ -49,8 +67,10 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    pass
-    #
+
+    print(message.content)
+
+
 
 initialize()
 bot.run(getenv("DISCORD_BOT_TOKEN"))
