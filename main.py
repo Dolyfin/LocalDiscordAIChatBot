@@ -1,6 +1,7 @@
 import discord
 import dotenv
 import os
+import asyncio
 from os import getenv
 
 bot = discord.Bot()
@@ -11,13 +12,16 @@ env_variables_list = ["DISCORD_BOT_TOKEN", "IMAGE_GEN_IP", "TEXT_GEN_IP"]
 
 
 def initialize():
-    print("<?> Initializing bot...")
+    print("<!> Initializing bot...")
 
     if not os.path.isfile(env_file_path):
         print("<?> '.env' not found. Creating new '.env' file with necessary variables.")
         with open(env_file_path, "w") as env_file:
             for variable_string in env_variables_list:
                 env_file.write(variable_string + "=\n")
+        print("<!> Please save your discord bot token and other settings in the '.env' file and start again.")
+        exit()
+
     else:
         with open(env_file_path, "r") as env_file:
             env_rows = env_file.readlines()
@@ -71,6 +75,9 @@ async def on_message(message):
     print(message.content)
 
 
-
 initialize()
-bot.run(getenv("DISCORD_BOT_TOKEN"))
+try:
+    bot.run(getenv("DISCORD_BOT_TOKEN"))
+except Exception as error:
+    print("<X> Bot has failed to start.")
+    print(error)
