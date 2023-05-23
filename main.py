@@ -15,6 +15,7 @@ configs_defaults = {
     "chat_enabled": True,
     "message_delay": 0,
     "mention_reply": True,
+    ""
 }
 env_file_path = ".env"
 env_variables_list = ["DISCORD_BOT_TOKEN", "IMAGE_GEN_IP", "TEXT_GEN_IP"]
@@ -124,8 +125,6 @@ async def on_ready():
         print("<!> Error while trying to check and update config.json")
         print(error)
 
-
-async def on_message
 
 @bot.event
 async def on_message(message):
