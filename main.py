@@ -5,7 +5,7 @@ import json
 import traceback
 from os import getenv
 
-bot = discord.Bot()
+bot = discord.Bot(intents=discord.Intents.all())
 dotenv.load_dotenv()
 
 configs_file_path = "configs.json"
@@ -95,10 +95,12 @@ async def set_config(server_id, config_name, new_config_value):
             configs_file.seek(0)
             json.dump(configs_json, configs_file, indent=4)
             configs_file.truncate()
+            return True
     except Exception as error:
         traceback.print_exc()
         print("<!> Error while trying to set config")
         print(error)
+        return False
 
 
 @bot.event
@@ -123,11 +125,12 @@ async def on_ready():
         print(error)
 
 
+async def on_message
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-
     print(message.content)
 
 
