@@ -7,6 +7,8 @@ https://github.com/AUTOMATIC1111/stable-diffusion-webui
 Requires API from oobabooga/text-generation-webui for text generation.
 https://github.com/oobabooga/text-generation-webui
 
+Disclaimer: I'm not the most experienced coder.
+
 # TODO:
 - Persistent configs
 - Per guild/channel support
