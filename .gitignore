@@ -3,4 +3,5 @@
 configs.json
 configs.json.bak
 chat_history.json
+temp
 *.bak
