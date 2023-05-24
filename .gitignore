@@ -3,3 +3,4 @@
 configs.json
 configs.json.bak
 message_history.json
+*.bak
