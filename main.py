@@ -88,14 +88,20 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    print(f"[ ] [{message.guild}] #{message.channel} ({message.channel.id})")
-    print(f"[+] {message.author}: {message.content}")
 
     for guild in cached_config_json:
         if message.channel.id == cached_config_json[guild]['chat_channel']:
+            print(f"[ ] [{message.guild}] #{message.channel} ({message.channel.id})")
+            print(f"[+] {message.author}: {message.content}")
             await chat_handler.add_message(message.channel.id, message.author.name, message.content)
+            await message.channel.send("ok")
 
-    await chat_handler.export_chat_histories()
+
+
+@bot.command(description="Change server settings.")
+async def editconfig(ctx, setting, value):
+    # TODO change the config for the server
+    pass
 
 
 initialize()
