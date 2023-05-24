@@ -54,9 +54,14 @@ async def set_config(server_id, config_name, new_config_value):
             configs_file.seek(0)
             json.dump(configs_json, configs_file, indent=4)
             configs_file.truncate()
-            return True
+            return await load_configs()
     except Exception as error:
         traceback.print_exc()
         print("<!> Error while trying to set config")
         print(error)
         return False
+
+
+async def load_configs():
+    with open(configs_file_path, "r") as configs_file:
+        return json.load(configs_file)
