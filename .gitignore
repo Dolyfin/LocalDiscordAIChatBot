@@ -2,5 +2,5 @@
 .env.bak
 configs.json
 configs.json.bak
-message_history.json
+chat_history.json
 *.bak

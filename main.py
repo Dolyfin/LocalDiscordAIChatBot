@@ -92,8 +92,10 @@ async def on_message(message):
     print(f"[+] {message.author}: {message.content}")
 
     for guild in cached_config_json:
-        if int(message.channel.id) == cached_config_json[guild]['chat_channel']:
-            await chat_handler.new_message(message.guild.id, message.channel.id, message)
+        if message.channel.id == cached_config_json[guild]['chat_channel']:
+            await chat_handler.add_message(message.channel.id, message.author.name, message.content)
+
+    await chat_handler.export_chat_histories()
 
 
 initialize()
