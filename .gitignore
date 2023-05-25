@@ -5,3 +5,4 @@ configs.json.bak
 chat_history.json
 temp
 *.bak
+.idea
