@@ -25,7 +25,7 @@ def initialize():
         with open(env_file_path, "w") as env_file:
             for variable_string in env_variables_list:
                 env_file.write(variable_string + "=\n")
-        print("<!> Please save your discord bot token and other settings in the '.env' file and start again.")
+        print("<!> Please save your discord bot token and API address settings in the '.env' file and start again.")
         exit()
     else:
         with open(env_file_path, "r") as env_file:
@@ -64,6 +64,7 @@ async def change_env_var(env_var, new_value):
             else:
                 env_file_lines = var_row
         env_file.writelines(env_file_lines)
+    return change_completed
 
 
 async def set_config_update(server_id, config_name, new_config_value):
@@ -97,17 +98,23 @@ async def on_message(message):
             await message.channel.send("ok")
 
 
-
 @bot.command(description="Change server settings.")
 async def editconfig(ctx, setting, value):
     # TODO change the config for the server
-    pass
+    if not await config_handler.set_config(ctx.guild.id, setting, value):
+        await ctx.respond(f"Failed to set '{setting}' to '{value}'.")
+        print(f"<!> [{ctx.guild.name}] Failed to set '{setting}' to '{value}'.")
+    else:
+        await ctx.respond(f"Successfully set '{setting}' to '{value}'.")
+        print(f"<!> [{ctx.guild.name}] Successfully set '{setting}' to '{value}'.")
+        global cached_config_json
+        cached_config_json = await config_handler.load_configs()
 
 
 initialize()
 try:
     bot.run(getenv("DISCORD_BOT_TOKEN"))
-except Exception as boterror:
+except Exception as bot_error:
     traceback.print_exc()
     print("<X> Bot has failed to start.")
-    print(boterror)
+    print(bot_error)
