@@ -6,7 +6,6 @@ from os import getenv
 
 import chat_handler
 import config_handler
-import api_hander
 
 bot = discord.Bot(intents=discord.Intents.all())
 dotenv.load_dotenv()
@@ -47,6 +46,9 @@ def initialize():
             env_file.writelines(env_file_lines)
 
     config_handler.create_config()
+
+
+import api_hander
 
 
 async def change_env_var(env_var, new_value):
