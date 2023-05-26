@@ -9,7 +9,7 @@ https://github.com/oobabooga/text-generation-webui (Recommended WizardLM-7B-Unce
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 # Minimal Viable Product
-The bot currently works as expected for chat generation.
+The bot currently works as expected for chat generation. Still very heavily WIP and will break as I make commits.
 
 # Getting Started
 1. ```git clone https://github.com/Dolyfin/DiscordAIChatBot```
