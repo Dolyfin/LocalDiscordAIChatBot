@@ -99,6 +99,9 @@ async def on_message(message):
 
 @bot.command(description="Change server settings.")
 async def editconfig(ctx, setting, value):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You are not an administrator of the server.")
+        return
     if not await config_handler.set_config(ctx.guild.id, setting, value):
         await ctx.respond(f"Failed to set '{setting}' to '{value}'.")
         print(f"<!> [{ctx.guild.name}] Failed to set '{setting}' to '{value}'.")
@@ -109,6 +112,15 @@ async def editconfig(ctx, setting, value):
         cached_config_json = await config_handler.load_configs()
 
         await ctx.guild.me.edit(nick=f"{ctx.guild.me.name} ({cached_config_json[str(ctx.guild.id)]['persona']})")
+
+
+@bot.command(description="Clears all chat history for current channel")
+async def clearhistory(ctx):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You are not an administrator of the server.")
+        return
+    await chat_handler.clear_all_history(ctx.channel.id)
+    ctx.respond('Cleared.')
 
 
 initialize()

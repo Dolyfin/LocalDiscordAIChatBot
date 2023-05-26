@@ -18,6 +18,12 @@ async def remove_oldest_message(channel_id):
         await export_chat_histories()
 
 
+async def clear_all_history(channel_id):
+    if channel_id in chat_histories:
+        del chat_histories[channel_id]
+        await export_chat_histories()
+
+
 async def get_chat_history(channel_id):
     return chat_histories.get(channel_id, [])
 
