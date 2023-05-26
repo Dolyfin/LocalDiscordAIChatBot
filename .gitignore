@@ -6,4 +6,4 @@ chat_history.json
 temp
 .idea
 persona/*
-!persona/example_persona.json
+!persona/example.json
