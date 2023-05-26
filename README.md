@@ -2,12 +2,11 @@
 Discord Chat bot powered by your own self hosted LLM and Image Generation.
 Disclaimer: I'm not the most experienced coder.
 
+## Requires API from oobabooga/text-generation-webui for text generation.
+https://github.com/oobabooga/text-generation-webui (Recommended WizardLM-7B-Uncensored 4bit)
+
 ## Requires API from AUTOMATIC1111/stable-diffusion-webui for image generation.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
-(Recommended WizardLM-7B-Uncensored 4bit)
-
-## Requires API from oobabooga/text-generation-webui for text generation.
-https://github.com/oobabooga/text-generation-webui
 
 # Minimal Viable Product
 The bot currently works as expected for chat generation.
