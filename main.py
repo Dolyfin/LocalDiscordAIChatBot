@@ -7,12 +7,13 @@ from os import getenv
 
 import chat_handler
 import config_handler
+import api_hander
 
 bot = discord.Bot(intents=discord.Intents.all())
 dotenv.load_dotenv()
 
 env_file_path = ".env"
-env_variables_list = ["DISCORD_BOT_TOKEN", "IMAGE_GEN_IP", "TEXT_GEN_IP"]
+env_variables_list = ["DISCORD_BOT_TOKEN", "TEXT_GEN_IP", "TEXT_GEN_PORT", "IMAGE_GEN_IP", "IMAGE_GEN_PORT"]
 
 cached_config_json = {}
 
@@ -91,11 +92,11 @@ async def on_message(message):
         return
 
     for guild in cached_config_json:
-        if message.channel.id == cached_config_json[guild]['chat_channel']:
+        if message.channel.id == int(cached_config_json[guild]['chat_channel']):
             print(f"[ ] [{message.guild}] #{message.channel} ({message.channel.id})")
             print(f"[+] {message.author}: {message.content}")
+            await message.channel.send(await api_hander.request_text_gen(message.channel.id, message.author.name, message.content))
             await chat_handler.add_message(message.channel.id, message.author.name, message.content)
-            await message.channel.send("ok")
 
 
 @bot.command(description="Change server settings.")

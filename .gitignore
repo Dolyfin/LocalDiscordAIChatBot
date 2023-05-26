@@ -1,8 +1,9 @@
 .env
-.env.bak
 configs.json
-configs.json.bak
 chat_history.json
-temp
 *.bak
+*.temp
+temp
 .idea
+persona/*
+!persona/example_persona.json

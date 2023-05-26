@@ -26,7 +26,7 @@ async def initialize_config(bot):
 
     for guild in bot.guilds:
         if str(guild.id) not in existing_configs:
-            print(f"<?> Creating defaults in configs.json for guild: {guild} ({guild.id})")
+            print(f"<?> Created defaults in configs.json for guild: {guild} ({guild.id})")
             existing_configs[str(guild.id)] = configs_defaults
 
     with open(configs_file_path, "w") as configs_file:

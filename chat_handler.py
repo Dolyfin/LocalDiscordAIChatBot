@@ -5,7 +5,7 @@ chat_histories = {}
 
 async def add_message(channel_id, role, content):
     chat_history = chat_histories.setdefault(channel_id, [])
-    chat_history.append({"role": role, "content": content})
+    chat_history.insert(0, {"role": role, "content": content})
     chat_histories[channel_id] = chat_history
     await export_chat_histories()
 
