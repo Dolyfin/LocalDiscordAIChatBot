@@ -1,12 +1,19 @@
-IF NOT EXIST venv (
-    echo <!> Creating virtual environment...
-    python -m venv venv
+@echo off
+
+set VENV_DIR=venv
+
+if not exist %VENV_DIR% (
+    echo ^<!^> Creating virtual environment...
+    python -m venv %VENV_DIR%
 )
 
-venv\Scripts\activate
+echo ^<!^> Activating virtual environment...
+call %VENV_DIR%\Scripts\activate.bat
 
-echo <!> Installing required packages...
+echo ^<!^> Installing required packages...
 pip install -r requirements.txt
 
-echo <!> Starting the bot...
+echo ^<!^> Starting the bot...
 python main.py
+
+pause

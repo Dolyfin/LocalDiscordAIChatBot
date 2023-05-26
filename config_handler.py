@@ -12,15 +12,46 @@ configs_defaults = {
     "persona": "example"
 }
 
+env_file_path = ".env"
+env_variables_list = ["DISCORD_BOT_TOKEN", "TEXT_GEN_IP", "TEXT_GEN_PORT", "IMAGE_GEN_IP", "IMAGE_GEN_PORT"]
 
-def create_config():
+
+def initialize_env():
+    if not os.path.isfile(env_file_path):
+        print("<?> '.env' not found. Creating new '.env' file with necessary variables.")
+        with open(env_file_path, "w") as env_file:
+            for variable_string in env_variables_list:
+                env_file.write(variable_string + "=\n")
+        print("<!> Please save your discord bot token and API address settings in the '.env' file and start again.")
+        exit()
+    else:
+        with open(env_file_path, "r") as env_file:
+            env_rows = env_file.readlines()
+
+        with open(env_file_path, "w") as env_file:
+            env_file_lines = []
+            for var_row in env_rows:
+                var_row_name = var_row.split("=")[0].strip()
+                if var_row_name in env_variables_list:
+                    env_file_lines.append(var_row)
+                else:
+                    print(f"<?> Removing '{var_row_name}' from '.env'. It is no longer needed.")
+
+            for variable_string in env_variables_list:
+                if variable_string not in [row.split("=")[0].strip() for row in env_rows]:
+                    print(f"<?> Adding variable '{variable_string}' to '.env'")
+                    env_file_lines.append(variable_string + "=\n")
+            env_file.writelines(env_file_lines)
+
+
+def initialize_config():
     if not os.path.exists(configs_file_path):
         print(f"<?> 'configs.json' not found. Creating new configs file.")
         with open(configs_file_path, "w") as configs_file:
             json.dump({}, configs_file)
 
 
-async def initialize_config(bot):
+async def create_config(bot):
     with open(configs_file_path, "r") as configs_file:
         existing_configs = json.load(configs_file)
 
@@ -65,3 +96,7 @@ async def set_config(server_id, config_name, new_config_value):
 async def load_configs():
     with open(configs_file_path, "r") as configs_file:
         return json.load(configs_file)
+
+
+initialize_env()
+initialize_config()
