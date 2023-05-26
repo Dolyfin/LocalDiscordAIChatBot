@@ -9,7 +9,7 @@ configs_defaults = {
     "chat_enabled": True,
     "message_delay": 0,
     "mention_reply": True,
-    "persona": "example_persona"
+    "persona": "example"
 }
 
 

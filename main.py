@@ -92,9 +92,10 @@ async def on_message(message):
 
     for guild in cached_config_json:
         if message.channel.id == int(cached_config_json[guild]['chat_channel']):
-            print(f"[ ] [{message.guild}] #{message.channel} ({message.channel.id})")
-            print(f"[+] {message.author}: {message.content}")
-            await message.channel.send(await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona']))
+            print(f"[+] #{message.channel} ({message.channel.id}) {message.author}: {message.content}")
+            response = await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
+            await message.channel.send(response)
+            print(f"[-] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
 
 
 @bot.command(description="Change server settings.")
@@ -120,7 +121,7 @@ async def clearhistory(ctx):
         await ctx.respond("You are not an administrator of the server.")
         return
     await chat_handler.clear_all_history(ctx.channel.id)
-    ctx.respond('Cleared.')
+    await ctx.respond('Cleared.')
 
 
 initialize()

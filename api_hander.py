@@ -56,7 +56,6 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
     }
 
     response = requests.post(f"http://{API_ADDRESS}/api/v1/generate", json=request)
-    print(f"\n===============Prompt===============\n{prompt}\n====================================")
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
