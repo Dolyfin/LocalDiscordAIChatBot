@@ -5,7 +5,7 @@ chat_histories = {}
 
 async def add_message(channel_id, role, content):
     chat_history = chat_histories.setdefault(channel_id, [])
-    chat_history.insert(0, {"role": role, "content": content})
+    chat_history.append({"role": role, "content": content})
     chat_histories[channel_id] = chat_history
     await export_chat_histories()
 
@@ -15,6 +15,7 @@ async def remove_oldest_message(channel_id):
     if chat_history:
         chat_history.pop(0)
         chat_histories[channel_id] = chat_history
+        await export_chat_histories()
 
 
 async def get_chat_history(channel_id):

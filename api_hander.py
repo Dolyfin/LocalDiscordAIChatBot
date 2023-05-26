@@ -9,14 +9,14 @@ dotenv.load_dotenv()
 API_ADDRESS = getenv('TEXT_GEN_IP') + ":" + getenv('TEXT_GEN_PORT')
 
 
-def load_persona(file_path):
+async def load_persona(file_path):
     with open(file_path, 'r') as file:
         persona_data = json.load(file)
     return persona_data
 
 
-async def request_text_gen(channel_id, user_name, message_content):
-    persona_data = load_persona("persona/example_persona.json")
+async def request_text_gen(channel_id, user_name, message_content, persona):
+    persona_data = await load_persona(f"persona/{persona}.json")
 
     prompt = persona_data["persona"] + "\n"
     prompt = prompt + persona_data["system_message"] + "\n"
@@ -29,10 +29,10 @@ async def request_text_gen(channel_id, user_name, message_content):
 
     request = {
         'prompt': prompt,
-        'max_new_tokens': 250,
+        'max_new_tokens': 512,
         'do_sample': True,
         'temperature': 1.3,
-        'top_p': 0.1,
+        'top_p': 1,
         'typical_p': 1,
         'epsilon_cutoff': 0,  # In units of 1e-4
         'eta_cutoff': 0,  # In units of 1e-4
@@ -56,11 +56,12 @@ async def request_text_gen(channel_id, user_name, message_content):
     }
 
     response = requests.post(f"http://{API_ADDRESS}/api/v1/generate", json=request)
-    print(f"Prompt:\n{prompt}")
+    print(f"\n===============Prompt===============\n{prompt}\n====================================")
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
         result = result.replace(f"\n{user_name}:", "")
+        await chat_handler.add_message(channel_id, user_name, message_content)
         await chat_handler.add_message(channel_id, persona_data['name'], result)
         return result
     elif response.status_code == 404:

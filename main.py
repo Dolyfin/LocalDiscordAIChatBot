@@ -2,7 +2,6 @@ import discord
 import dotenv
 import os
 import traceback
-import asyncio
 from os import getenv
 
 import chat_handler
@@ -95,13 +94,11 @@ async def on_message(message):
         if message.channel.id == int(cached_config_json[guild]['chat_channel']):
             print(f"[ ] [{message.guild}] #{message.channel} ({message.channel.id})")
             print(f"[+] {message.author}: {message.content}")
-            await message.channel.send(await api_hander.request_text_gen(message.channel.id, message.author.name, message.content))
-            await chat_handler.add_message(message.channel.id, message.author.name, message.content)
+            await message.channel.send(await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona']))
 
 
 @bot.command(description="Change server settings.")
 async def editconfig(ctx, setting, value):
-    # TODO change the config for the server
     if not await config_handler.set_config(ctx.guild.id, setting, value):
         await ctx.respond(f"Failed to set '{setting}' to '{value}'.")
         print(f"<!> [{ctx.guild.name}] Failed to set '{setting}' to '{value}'.")
@@ -110,6 +107,8 @@ async def editconfig(ctx, setting, value):
         print(f"<!> [{ctx.guild.name}] Successfully set '{setting}' to '{value}'.")
         global cached_config_json
         cached_config_json = await config_handler.load_configs()
+
+        await ctx.guild.me.edit(nick=f"{ctx.guild.me.name} ({cached_config_json[str(ctx.guild.id)]['persona']})")
 
 
 initialize()
