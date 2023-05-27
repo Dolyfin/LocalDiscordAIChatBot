@@ -1,5 +1,5 @@
 # LocalDiscordAIChatBot
-Discord Chat bot powered by your own self hosted LLM and Image Generation.
+Discord Chat bot powered by your own self hosted LLM and Image Generation.  
 Disclaimer: I'm not the most experienced coder.
 
 ### Requires API from oobabooga/text-generation-webui for text generation.
