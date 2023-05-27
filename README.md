@@ -12,7 +12,7 @@ https://github.com/AUTOMATIC1111/stable-diffusion-webui
 The bot currently works as expected for chat generation. Still very heavily WIP and will break as I make commits.
 
 # Getting Started
-1. ```git clone https://github.com/Dolyfin/DiscordAIChatBot```
+1. ```git clone https://github.com/Dolyfin/LocalDiscordAIChatBot```
 2. Run ```startbot.bat```
 3. Add discord bot token, API address and port into ```.env``` file.
 4. Run ```startbot.bat``` again.
