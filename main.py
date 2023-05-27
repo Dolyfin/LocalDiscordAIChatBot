@@ -95,6 +95,15 @@ async def clearhistory(ctx):
     await ctx.respond('Cleared.')
 
 
+@bot.command(description="A test command")
+async def testcmd(ctx):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You are not an administrator of the server.")
+        return
+    await chat_handler.remove_oldest_message(ctx.channel_id)
+    await ctx.respond('received.')
+
+
 initialize()
 try:
     bot.run(getenv("DISCORD_BOT_TOKEN"))
