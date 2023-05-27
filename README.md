@@ -1,4 +1,4 @@
-# DiscordAIChatBot
+# LocalDiscordAIChatBot
 Discord Chat bot powered by your own self hosted LLM and Image Generation.
 Disclaimer: I'm not the most experienced coder.
 
