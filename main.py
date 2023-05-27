@@ -1,6 +1,7 @@
 import discord
 import dotenv
 import traceback
+import asyncio
 from os import getenv
 
 import chat_handler
@@ -63,8 +64,10 @@ async def on_message(message):
 
     for guild in cached_config_json:
         if message.channel.id == int(cached_config_json[guild]['chat_channel']):
+            await message.channel.trigger_typing()
             print(f"[+] #{message.channel} ({message.channel.id}) {message.author}: {message.content}")
             response = await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
+            await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
             await message.channel.send(response)
             print(f"[=] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
 
