@@ -66,7 +66,7 @@ async def on_message(message):
             print(f"[+] #{message.channel} ({message.channel.id}) {message.author}: {message.content}")
             response = await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
             await message.channel.send(response)
-            print(f"[-] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
+            print(f"[=] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
 
 
 @bot.command(description="Change server settings.")

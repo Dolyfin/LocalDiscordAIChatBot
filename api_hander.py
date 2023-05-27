@@ -15,7 +15,23 @@ async def load_persona(file_path):
     return persona_data
 
 
+async def auto_truncate_chat_history(channel_id, message_content, word_limit):
+    while True:
+        word_count = len(message_content.split())
+        for chat_message in await chat_handler.get_chat_history(channel_id):
+            word_count += len(chat_message['role'].split())
+            word_count += len(chat_message['content'].split())
+
+        if word_count >= word_limit:
+            chat_handler.remove_oldest_message(channel_id)
+            print(f"[-] ({channel_id}) Message history too long ({word_count}), removing oldest message.")
+        else:
+            break
+
+
 async def request_text_gen(channel_id, user_name, message_content, persona):
+    await auto_truncate_chat_history(channel_id, message_content, 1024)
+
     persona_data = await load_persona(f"persona/{persona}.json")
 
     prompt = persona_data["persona"] + "\n"
