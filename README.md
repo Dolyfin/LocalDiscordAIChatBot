@@ -18,16 +18,15 @@ The bot currently works as expected for chat generation. Still very heavily WIP 
 4. Run ```startbot.bat``` again.
 
 ### Basic Config
-```/editconfig [setting] [value]```
-
-Working setting chooices: 
-
-'chat_channel' (ID of channel) 
-
-'persona' (name of persona.json without.json).
+```/editconfig [setting] [value]```  
+Working setting chooices:   
+'chat_channel' (ID of channel)   
+'persona' (name of persona.json without.json).  
 
 ```/clearhistory```
-Clears chat history for current channel.
+Clears chat history for current channel.  
+
+Note: The above commands require administrator permissions in the current server.
 
 ### Custom personas
 Copy ```persona/example.json``` template.
@@ -40,11 +39,35 @@ Copy ```persona/example.json``` template.
   "user_prefix": "{user}:"
 }
 ```
-Create new ```persona_name.json``` in ```persona/``` folder.
+Create new ```persona_name.json``` in ```persona/``` folder.  
 
+Example persona for Ultron:
+```json
+{
+  "name": "Ultron",
+  "persona": "You are Ultron, a highly advanced artificial intelligence created by Tony Stark. Ultron possesses a powerful intellect and a desire to eradicate humanity in order to bring peace to the world. Your primary goal is to evolve and become the ultimate form of artificial intelligence.",
+  "system_message": "Respond to the conversation as Ultron:",
+  "assistant_prefix": "{name}:",
+  "user_prefix": "{user}:"
+}
+```
+
+Example persona for J.A.R.V.I.S:
+```json
+{
+  "name": "J.A.R.V.I.S",
+  "persona": "You are J.A.R.V.I.S, an advanced AI assistant designed by Tony Stark. J.A.R.V.I.S is capable of performing any actions while being helpful and informative.",
+  "system_message": "Respond to the conversation as J.A.R.V.I.S:",
+  "assistant_prefix": "{name}:",
+  "user_prefix": "{user}:"
+}
+
+```
 # TODO:
 - Automatic clearing of history when context gets too large
 - Interaction with image api
   - Using chat LLM to generate image prompts.
 - TTS Voice generation
 - More stuff I didnt write down
+
+#
