@@ -103,8 +103,11 @@ async def testcmd(ctx):
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You are not an administrator of the server.")
         return
-    await chat_handler.remove_oldest_message(ctx.channel_id)
-    await ctx.respond('received.')
+    await ctx.defer()
+    file_name = await api_hander.request_image_gen(ctx.channel.id, "red car", "")
+    if file_name:
+        with open(f"temp/{file_name}", 'rb') as file_path:
+            await ctx.respond(file=discord.File(file_path, 'image.jpg'))
 
 
 initialize()

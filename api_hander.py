@@ -1,13 +1,17 @@
 import requests
 import json
 import dotenv
+import base64
+import io
+import os
+from PIL import Image
 from os import getenv
 
 import chat_handler
 
 dotenv.load_dotenv()
-API_ADDRESS = getenv('TEXT_GEN_IP') + ":" + getenv('TEXT_GEN_PORT')
-
+TEXT_API_ADDRESS = getenv('TEXT_GEN_IP') + ":" + getenv('TEXT_GEN_PORT')
+IMAGE_API_ADDRESS = getenv('IMAGE_GEN_IP') + ":" + getenv('IMAGE_GEN_PORT')
 
 async def load_persona(file_path):
     with open(file_path, 'r') as file:
@@ -71,7 +75,7 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
         'stopping_strings': [f"\n{user_name}:"]
     }
 
-    response = requests.post(f"http://{API_ADDRESS}/api/v1/generate", json=request)
+    response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
@@ -83,3 +87,44 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
         return "Not Found 404"
     else:
         return str(response.status_code)
+
+
+async def request_image_gen(channel_id, prompt, negative_prompt):
+    pos_prompt = f"{prompt}"
+    neg_prompt = f"{negative_prompt}"
+    payload = {
+        "enable_hr": False,
+        "prompt": pos_prompt,
+        "seed": -1,
+        "sampler_name": "DPM++ 2M",
+        "batch_size": 1,
+        "steps": 20,
+        "cfg_scale": 7,
+        "width": 512,
+        "height": 512,
+        "restore_faces": False,
+        "tiling": False,
+        "negative_prompt": neg_prompt
+    }
+    response = requests.post(url=f'http://{IMAGE_API_ADDRESS}/sdapi/v1/txt2img', json=payload)
+    if response.status_code == 200:
+        response_json = response.json()
+        for i in response_json['images']:
+            image = Image.open(io.BytesIO(base64.b64decode(i.split(",", 1)[0])))
+            file_name = f"{channel_id}.jpg"
+            file_path = f"temp/{file_name}"
+            if not os.path.exists("temp"):
+                os.makedirs("temp")
+            image.save(file_path, "JPEG", quality=75, optimize=True, progressive=True)
+            print(f"[=] Image generated in ({channel_id}) for: +({pos_prompt}) -({neg_prompt})")
+            return file_name
+    else:
+        print(str(response.status_code))
+        return False
+
+
+async def gen_sd_prompt(message):
+    # TODO: Take input message and get LLM to generate sd prompt
+    pass
+    return
+

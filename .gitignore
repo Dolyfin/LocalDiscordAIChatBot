@@ -4,6 +4,8 @@ chat_history.json
 *.bak
 *.temp
 temp
+temp/
+temp/*
 .idea
 persona/*
 !persona/example.json
