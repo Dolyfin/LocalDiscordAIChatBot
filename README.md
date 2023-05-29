@@ -17,6 +17,10 @@ The bot currently works as expected for chat generation. Still very heavily WIP 
 3. Add discord bot token, API address and port into ```.env``` file.
 4. Run ```startbot.bat``` again.
 
+### Updating
+1. cd to root folder ```*/LocalDiscordAIChatBot/```
+2. ```git pull https://github.com/Dolyfin/LocalDiscordAIChatBot```
+
 ### Basic Config
 ```/editconfig [setting] [value]```  
 Working setting chooices:   
