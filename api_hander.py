@@ -47,8 +47,8 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
         'prompt': prompt,
         'max_new_tokens': 512,
         'do_sample': True,
-        'temperature': 1.3,
-        'top_p': 1,
+        'temperature': 1.5,
+        'top_p': 0.5,
         'typical_p': 1,
         'epsilon_cutoff': 0,  # In units of 1e-4
         'eta_cutoff': 0,  # In units of 1e-4
