@@ -2,6 +2,7 @@ import discord
 import dotenv
 import traceback
 import asyncio
+import re
 from os import getenv
 
 import chat_handler
@@ -43,6 +44,22 @@ async def set_config_update(server_id, config_name, new_config_value):
     cached_config_json.update(await config_handler.set_config(server_id, config_name, new_config_value))
 
 
+async def image_gen_trigger(message):
+    first_word_patterns = r'(send|draw|show)'
+    second_word_patterns = r'(image|picture|photo)'
+    first_word_match = re.search(first_word_patterns, message, re.IGNORECASE)
+
+    if first_word_match:
+        first_word_index = first_word_match.end()
+        next_words = message[first_word_index:].split()[:5]
+        next_words_str = ' '.join(next_words)
+        second_word_match = re.search(second_word_patterns, next_words_str, re.IGNORECASE)
+
+        if second_word_match:
+            return True
+    return False
+
+
 @bot.event
 async def on_ready():
     print(f"<?> Bot connected to discord as {bot.user}!")
@@ -69,6 +86,11 @@ async def on_message(message):
             response = await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
             await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
             await message.channel.send(response)
+            #if await image_gen_trigger(message):
+            #    file_name = await api_hander.request_image_gen(ctx.channel.id, "red car", "")
+            #    if file_name:
+            #        with open(f"temp/{file_name}", 'rb') as file_path:
+            #            await ctx.respond(file=discord.File(file_path, 'image.jpg'))
             print(f"[=] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
 
 
@@ -108,6 +130,16 @@ async def testcmd(ctx):
     if file_name:
         with open(f"temp/{file_name}", 'rb') as file_path:
             await ctx.respond(file=discord.File(file_path, 'image.jpg'))
+
+
+@bot.command(description="A test command")
+async def shutdownbot(ctx):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You are not an administrator of the server.")
+        return
+    await chat_handler.remove_oldest_message(ctx.channel_id)
+    await ctx.respond(f"Bot shutting down...")
+    exit()
 
 
 initialize()

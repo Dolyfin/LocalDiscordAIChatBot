@@ -89,6 +89,50 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
         return str(response.status_code)
 
 
+
+async def gen_image_prompt(message, reply):
+    request = {
+        'prompt': prompt,
+        'max_new_tokens': 512,
+        'do_sample': True,
+        'temperature': 2.0,
+        'top_p': 0.5,
+        'typical_p': 1,
+        'epsilon_cutoff': 0,  # In units of 1e-4
+        'eta_cutoff': 0,  # In units of 1e-4
+        'repetition_penalty': 1.18,
+        'top_k': 40,
+        'min_length': 0,
+        'no_repeat_ngram_size': 0,
+        'num_beams': 1,
+        'penalty_alpha': 0,
+        'length_penalty': 1,
+        'early_stopping': False,
+        'mirostat_mode': 0,
+        'mirostat_tau': 5,
+        'mirostat_eta': 0.1,
+        'seed': -1,
+        'add_bos_token': True,
+        'truncation_length': 2048,
+        'ban_eos_token': False,
+        'skip_special_tokens': True,
+        'stopping_strings': [f"\n{user_name}:"]
+    }
+
+    response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
+
+    if response.status_code == 200:
+        result = response.json()['results'][0]['text']
+        result = result.replace(f"\n{user_name}:", "")
+        await chat_handler.add_message(channel_id, user_name, message_content)
+        await chat_handler.add_message(channel_id, persona_data['name'], result)
+        return result
+    elif response.status_code == 404:
+        return "Not Found 404"
+    else:
+        return str(response.status_code)
+
+
 async def request_image_gen(channel_id, prompt, negative_prompt):
     pos_prompt = f"{prompt}"
     neg_prompt = f"{negative_prompt}"
