@@ -68,10 +68,10 @@ Example persona for J.A.R.V.I.S:
 
 ```
 # TODO:
-- Automatic clearing of history when context gets too large
 - Interaction with image api
   - Using chat LLM to generate image prompts.
 - TTS Voice generation
+- Speech to text
 - More stuff I didnt write down
 
 #
