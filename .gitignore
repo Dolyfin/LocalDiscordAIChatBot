@@ -3,6 +3,7 @@ configs.json
 chat_history.json
 *.bak
 *.temp
+filter.txt
 temp
 temp/
 temp/*

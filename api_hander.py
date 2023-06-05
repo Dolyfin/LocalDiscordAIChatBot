@@ -21,6 +21,7 @@ async def load_persona(file_path):
 
 
 async def auto_truncate_chat_history(channel_id, message_content, word_limit):
+    removed_counter = 0
     while True:
         word_count = len(message_content.split())
         for chat_message in await chat_handler.get_chat_history(channel_id):
@@ -29,8 +30,10 @@ async def auto_truncate_chat_history(channel_id, message_content, word_limit):
 
         if word_count >= word_limit:
             await chat_handler.remove_oldest_message(channel_id)
-            print(f"[-] ({channel_id}) Message history too long ({word_count}), removing oldest message.")
+            removed_counter += 1
         else:
+            if removed_counter > 0:
+                print(f"[-] ({channel_id}) Message history too long (max {word_limit}), removing oldest message. (x{removed_counter})")
             break
 
 
@@ -53,50 +56,6 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
         'max_new_tokens': 512,
         'do_sample': True,
         'temperature': 1.5,
-        'top_p': 0.5,
-        'typical_p': 1,
-        'epsilon_cutoff': 0,  # In units of 1e-4
-        'eta_cutoff': 0,  # In units of 1e-4
-        'repetition_penalty': 1.18,
-        'top_k': 40,
-        'min_length': 0,
-        'no_repeat_ngram_size': 0,
-        'num_beams': 1,
-        'penalty_alpha': 0,
-        'length_penalty': 1,
-        'early_stopping': False,
-        'mirostat_mode': 0,
-        'mirostat_tau': 5,
-        'mirostat_eta': 0.1,
-        'seed': -1,
-        'add_bos_token': True,
-        'truncation_length': 2048,
-        'ban_eos_token': False,
-        'skip_special_tokens': True,
-        'stopping_strings': [f"\n{user_name}:"]
-    }
-
-    response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
-
-    if response.status_code == 200:
-        result = response.json()['results'][0]['text']
-        result = result.replace(f"\n{user_name}:", "")
-        await chat_handler.add_message(channel_id, user_name, message_content)
-        await chat_handler.add_message(channel_id, persona_data['name'], result)
-        return result
-    elif response.status_code == 404:
-        return "Not Found 404"
-    else:
-        return str(response.status_code)
-
-
-
-async def gen_image_prompt(message, reply):
-    request = {
-        'prompt': prompt,
-        'max_new_tokens': 512,
-        'do_sample': True,
-        'temperature': 2.0,
         'top_p': 0.5,
         'typical_p': 1,
         'epsilon_cutoff': 0,  # In units of 1e-4
@@ -161,19 +120,21 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
             if not os.path.exists("temp"):
                 os.makedirs("temp")
             image.save(file_path, "JPEG", quality=75, optimize=True, progressive=True)
-            print(f"[=] Image generated in ({channel_id}) for: +({pos_prompt}) -({neg_prompt})")
             return file_name
     else:
         print(str(response.status_code))
         return False
 
 
-async def gen_sd_prompt(message):
+async def request_sd_prompt(user_name, user_message, persona, bot_message):
     # TODO: Take input message and get LLM to generate sd prompt
-    prompt = '''
-    You are a Image description generator. Based on the following message, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Separate descriptions with commas.
+    persona_data = await load_persona(f"persona/{persona}.json")
+    bot_name = persona_data['name']
+    prompt = f'''
+    You are a Image description generator. Based on the following message, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Do not use NSFW words. Separate descriptions with commas.
 
-    "Can you draw me a picture of some mountains?"
+    "{user_name}: {user_message}"
+    "{bot_name}: {bot_message}"
     ### Response:Image description: 
     '''
 
@@ -202,13 +163,15 @@ async def gen_sd_prompt(message):
         'truncation_length': 2048,
         'ban_eos_token': False,
         'skip_special_tokens': True,
-        'stopping_strings': [f""]
+        'stopping_strings': []
     }
 
     response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
+        result = result.replace("\n", "")
+        result = result.strip()
         return result
     elif response.status_code == 404:
         return "Not Found 404"

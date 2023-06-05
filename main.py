@@ -3,6 +3,7 @@ import dotenv
 import traceback
 import asyncio
 import re
+import os
 from os import getenv
 
 import chat_handler
@@ -19,6 +20,10 @@ cached_config_json = {}
 def initialize():
     print("<!> Initializing bot...")
     config_handler.initialize_config()
+    if not os.path.exists("filter.txt"):
+        print(f"<?> 'filter.txt' not found. Creating new filter file.")
+        with open("filter.txt", "w") as filter_file:
+            filter_file.write("naked\nnsfw\ngore\n")
 
 
 async def change_env_var(env_var, new_value):
@@ -45,8 +50,8 @@ async def set_config_update(server_id, config_name, new_config_value):
 
 
 async def image_gen_trigger(message):
-    first_word_patterns = r'(send|draw|show)'
-    second_word_patterns = r'(image|picture|photo)'
+    first_word_patterns = r'(send|draw|show|display|generate|give)'
+    second_word_patterns = r'(image|picture|photo|drawing|art|artwork)'
     first_word_match = re.search(first_word_patterns, message, re.IGNORECASE)
 
     if first_word_match:
@@ -57,6 +62,16 @@ async def image_gen_trigger(message):
 
         if second_word_match:
             return True
+    return False
+
+
+def filter_word_detector(input_string):
+    with open('filter.txt', 'r') as filter_file:
+        nsfw_phrases = [line.strip() for line in filter_file]
+    input_lower = input_string.lower()
+    for phrase in nsfw_phrases:
+        if phrase in input_lower:
+            return phrase
     return False
 
 
@@ -86,12 +101,24 @@ async def on_message(message):
             response = await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
             await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
             await message.channel.send(response)
-            #if await image_gen_trigger(message):
-            #    file_name = await api_hander.request_image_gen(ctx.channel.id, "red car", "")
-            #    if file_name:
-            #        with open(f"temp/{file_name}", 'rb') as file_path:
-            #            await ctx.respond(file=discord.File(file_path, 'image.jpg'))
             print(f"[=] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
+
+            if await image_gen_trigger(message.content):
+                print(f"[?] Image generating...")
+                await message.channel.trigger_typing()
+                prompt_output = await api_hander.request_sd_prompt(message.author, message.content, cached_config_json[guild]['persona'], response)
+                result = filter_word_detector(prompt_output)
+                if result:
+                    print(f"<?> Filter detected word ({result}) in prompt.")
+                    await message.channel.send(f"```Image Filtered```")
+                else:
+                    print(f"[=] #{message.channel} ({message.channel.id}) Image Gen: +({prompt_output}) -()")
+                    file_name = await api_hander.request_image_gen(message.channel.id, prompt_output, "")
+
+                    if file_name:
+                        with open(f"temp/{file_name}", 'rb') as file_path:
+                            await message.channel.send(file=discord.File(file_path, 'image.jpg'))
+
 
 
 @bot.command(description="Change server settings.")
@@ -108,7 +135,7 @@ async def editconfig(ctx, setting, value):
         global cached_config_json
         cached_config_json = await config_handler.load_configs()
 
-        await ctx.guild.me.edit(nick=f"{ctx.guild.me.name} ({cached_config_json[str(ctx.guild.id)]['persona']})")
+        await ctx.guild.me.edit(nick=f"{cached_config_json[str(ctx.guild.id)]['persona']}")
 
 
 @bot.command(description="Clears all chat history for current channel")
@@ -126,12 +153,7 @@ async def testcmd(ctx, var):
         await ctx.respond("You are not an administrator of the server.")
         return
     await ctx.defer()
-    output = await api_hander.gen_sd_prompt(var)
-    print(f"SD Output: {output}")
-    file_name = await api_hander.request_image_gen(ctx.channel.id, output, "")
-    if file_name:
-        with open(f"temp/{file_name}", 'rb') as file_path:
-            await ctx.respond(file=discord.File(file_path, 'image.jpg'))
+    await ctx.respond(filter_word_detector(var))
 
 
 @bot.command(description="A test command")
