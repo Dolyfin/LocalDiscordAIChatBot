@@ -170,9 +170,12 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
 
 async def gen_sd_prompt(message):
     # TODO: Take input message and get LLM to generate sd prompt
-    prompt = """
-    
-    """
+    prompt = '''
+    You are a Image description generator. Based on the following message, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Separate descriptions with commas.
+
+    "Can you draw me a picture of some mountains?"
+    ### Response:Image description: 
+    '''
 
     request = {
         'prompt': prompt,
@@ -199,20 +202,15 @@ async def gen_sd_prompt(message):
         'truncation_length': 2048,
         'ban_eos_token': False,
         'skip_special_tokens': True,
-        'stopping_strings': [f"\n{user_name}:"]
+        'stopping_strings': [f""]
     }
 
     response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
-        result = result.replace(f"\n{user_name}:", "")
-        await chat_handler.add_message(channel_id, user_name, message_content)
-        await chat_handler.add_message(channel_id, persona_data['name'], result)
         return result
     elif response.status_code == 404:
         return "Not Found 404"
     else:
         return str(response.status_code)
-    return
-

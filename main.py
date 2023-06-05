@@ -121,12 +121,14 @@ async def clearhistory(ctx):
 
 
 @bot.command(description="A test command")
-async def testcmd(ctx):
+async def testcmd(ctx, var):
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You are not an administrator of the server.")
         return
     await ctx.defer()
-    file_name = await api_hander.request_image_gen(ctx.channel.id, "red car", "")
+    output = await api_hander.gen_sd_prompt(var)
+    print(f"SD Output: {output}")
+    file_name = await api_hander.request_image_gen(ctx.channel.id, output, "")
     if file_name:
         with open(f"temp/{file_name}", 'rb') as file_path:
             await ctx.respond(file=discord.File(file_path, 'image.jpg'))
