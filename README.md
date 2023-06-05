@@ -16,6 +16,7 @@ The bot currently works as expected for chat generation. Still very heavily WIP 
 2. Run ```startbot.bat```
 3. Add discord bot token, API address and port into ```.env``` file.
 4. Run ```startbot.bat``` again.
+5. Use ```/editconfig chat_channel [channel id here]``` to select a chat channel.
 
 ### Updating
 1. cd to root folder ```*/LocalDiscordAIChatBot/```
@@ -76,6 +77,7 @@ Example persona for J.A.R.V.I.S:
   - Using chat LLM to generate image prompts
 # TODO:
 - Hard image generation filter (to remove nsfw image)
+- Implement chat experience when using @ mentions of the bot outside of chat channel.
 - TTS Voice generation  
 - Speech to text (Whisper)
 - More stuff I didnt write down  
