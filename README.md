@@ -8,8 +8,11 @@ https://github.com/oobabooga/text-generation-webui (Recommended WizardLM-7B-Unce
 ### Requires API from AUTOMATIC1111/stable-diffusion-webui for image generation.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
-# Minimal Viable Product
-The bot currently works as expected for chat generation. Still very heavily WIP and will break as I make commits.
+# Features
+Note: Still very in WIP and will break as I make commits.  
+
+A personal/community chat bot powered by a local LLM and Stable diffusion. The bot can have a customized personality config and send images.  
+Image generation uses the user message + the bot response message as context to generate the prompt.
 
 # Getting Started
 1. ```git clone https://github.com/Dolyfin/LocalDiscordAIChatBot```
@@ -31,8 +34,10 @@ Working setting chooices:
 ```/clearhistory```
 Clears chat history for current channel.  
 
-Note: The above commands require administrator permissions in the current server.
+Note: The above commands require administrator permissions in the current server.  
 
+```filter.txt```
+list of words to filter from the image prompt.
 ### Custom personas
 Copy ```persona/example.json``` template.
 ```json
@@ -85,7 +90,7 @@ Example persona for J.A.R.V.I.S:
 # Examples
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/80b6df3a-62ea-45a2-8038-084c32d971c8)
 
-![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/9599866d-fea7-4225-bedd-e9925c9a86e0)
+![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/9599866d-fea7-4225-bedd-e9925c9a86e0)  
 (Image Prompt: GreenHaus - A logotype featuring a leaf or plant design with the name "GreenHaus" written beneath in a clean, contemporary font.)
 
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/69a5a8d2-1713-44a2-8934-2c3ea492d209)
