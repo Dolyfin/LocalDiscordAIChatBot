@@ -67,11 +67,28 @@ Example persona for J.A.R.V.I.S:
 }
 
 ```
+# Working:
+- Chat and response  
+  - Message history  
+  - Personality config  
+  - Should recognize different users in conversation
+- Image generation  
+  - Using chat LLM to generate image prompts
 # TODO:
-- Interaction with image api
-  - Using chat LLM to generate image prompts.
-- TTS Voice generation
-- Speech to text
-- More stuff I didnt write down
+- Hard image generation filter (to remove nsfw image)
+- TTS Voice generation  
+- Speech to text (Whisper)
+- More stuff I didnt write down  
 
-#
+# Examples
+![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/80b6df3a-62ea-45a2-8038-084c32d971c8)
+
+![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/9599866d-fea7-4225-bedd-e9925c9a86e0)
+(Image Prompt: GreenHaus - A logotype featuring a leaf or plant design with the name "GreenHaus" written beneath in a clean, contemporary font.)
+
+![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/69a5a8d2-1713-44a2-8934-2c3ea492d209)
+
+![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/5162f060-3ff9-4a9f-9613-803c01fd40c0)
+
+
+
