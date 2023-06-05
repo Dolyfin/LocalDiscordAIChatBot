@@ -37,7 +37,7 @@ Clears chat history for current channel.
 Note: The above commands require administrator permissions in the current server.  
 
 ```filter.txt```
-list of words to filter from the image prompt.
+List of words to filter from the image prompt. You can start with: "https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/blob/master/en"
 ### Custom personas
 Copy ```persona/example.json``` template.
 ```json
