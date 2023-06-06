@@ -95,7 +95,4 @@ Example persona for J.A.R.V.I.S:
 
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/69a5a8d2-1713-44a2-8934-2c3ea492d209)
 
-![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/5162f060-3ff9-4a9f-9613-803c01fd40c0)
-
-
 
