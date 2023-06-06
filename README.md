@@ -12,8 +12,11 @@ https://github.com/AUTOMATIC1111/stable-diffusion-webui
 Note: Still very in WIP and will break as I make commits.  
 
 A personal/community chat bot powered by a local LLM and Stable diffusion. The bot can have a customized personality config and send images.  
-Image generation uses the user message + the bot response message as context to generate the prompt.
+Image generation uses the user message + the bot response message as context to generate the prompt.  
 
+To trigger image generation, user needs to send 1 word from first then second list:  
+(send|draw|show|display|generate|give)  
+(image|picture|photo|drawing|art|artwork)  
 # Getting Started
 1. ```git clone https://github.com/Dolyfin/LocalDiscordAIChatBot```
 2. Run ```startbot.bat```
