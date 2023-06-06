@@ -8,8 +8,10 @@ configs_defaults = {
     "chat_channel": -1,
     "chat_enabled": True,
     "message_delay": 0,
+    "message_reply": False,
     "mention_reply": True,
-    "persona": "example"
+    "persona": "example",
+    "enable_image_gen": True
 }
 
 env_file_path = ".env"
