@@ -4,14 +4,15 @@ import os
 
 configs_file_path = "configs.json"
 configs_defaults = {
-    "owner_id": -1,
-    "chat_channel": -1,
+    "chat_channel": 0,
+    "persona": "example",
     "chat_enabled": True,
     "message_delay": 0,
     "message_reply": False,
+    "message_reply_mention": False,
     "mention_reply": True,
-    "persona": "example",
-    "enable_image_gen": True
+    "image_enabled": True,
+    "filter_enabled": True
 }
 
 env_file_path = ".env"
@@ -103,7 +104,14 @@ async def set_config(server_id, config_name, new_config_value):
         with open(configs_file_path, "r+") as configs_file:
             configs_json = json.load(configs_file)
             server_configs = configs_json.setdefault(str(server_id), {})
-            server_configs[config_name] = new_config_value
+            if new_config_value.isdigit():
+                server_configs[config_name] = int(new_config_value)
+            elif new_config_value.lower() == "true":
+                server_configs[config_name] = True
+            elif new_config_value.lower() == "false":
+                server_configs[config_name] = False
+            else:
+                server_configs[config_name] = new_config_value
             configs_file.seek(0)
             json.dump(configs_json, configs_file, indent=4)
             configs_file.truncate()
@@ -128,7 +136,3 @@ async def load_persona(persona_name):
     except Exception as load_persona_error:
         print(f"<!> Failed to load persona: persona/{persona_name}.json")
         print(load_persona_error)
-
-
-initialize_env()
-initialize_config()
