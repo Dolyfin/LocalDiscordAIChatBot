@@ -8,16 +8,11 @@ from PIL import Image
 from os import getenv
 
 import chat_handler
+import config_handler
 
 dotenv.load_dotenv()
 TEXT_API_ADDRESS = getenv('TEXT_GEN_IP') + ":" + getenv('TEXT_GEN_PORT')
 IMAGE_API_ADDRESS = getenv('IMAGE_GEN_IP') + ":" + getenv('IMAGE_GEN_PORT')
-
-
-async def load_persona(file_path):
-    with open(file_path, 'r') as file:
-        persona_data = json.load(file)
-    return persona_data
 
 
 async def auto_truncate_chat_history(channel_id, message_content, word_limit):
@@ -40,7 +35,7 @@ async def auto_truncate_chat_history(channel_id, message_content, word_limit):
 async def request_text_gen(channel_id, user_name, message_content, persona):
     await auto_truncate_chat_history(channel_id, message_content, 800)
 
-    persona_data = await load_persona(f"persona/{persona}.json")
+    persona_data = await config_handler.load_persona(persona)
 
     prompt = persona_data["persona"] + "\n"
     prompt = prompt + persona_data["system_message"] + "\n"
@@ -128,7 +123,7 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
 
 async def request_sd_prompt(user_name, user_message, persona, bot_message):
     # TODO: Take input message and get LLM to generate sd prompt
-    persona_data = await load_persona(f"persona/{persona}.json")
+    persona_data = await config_handler.load_persona(persona)
     bot_name = persona_data['name']
     prompt = f'''
     You are a Image description generator. Based on the following message, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Do not use NSFW words. Separate descriptions with commas.

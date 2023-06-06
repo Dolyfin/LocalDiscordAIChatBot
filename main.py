@@ -87,6 +87,12 @@ async def on_ready():
         traceback.print_exc()
         print("<!> Error while trying to check and update config.json")
         print(error)
+    for guild in bot.guilds:
+        if not guild.me.guild_permissions.change_nickname:
+            print(f"<?> No permission to change nickname in {guild.name} ({guild.id})")
+        else:
+            persona_data = await config_handler.load_persona(cached_config_json[str(guild.id)]['persona'])
+            await guild.me.edit(nick=f"{persona_data['name']}")
 
 
 @bot.event
@@ -135,7 +141,7 @@ async def editconfig(ctx, setting, value):
         global cached_config_json
         cached_config_json = await config_handler.load_configs()
 
-        await ctx.guild.me.edit(nick=f"{cached_config_json[str(ctx.guild.id)]['persona']}")
+        await ctx.guild.me.edit(nick=f"{await config_handler.load_persona(cached_config_json[str(ctx.guild.id)]['persona'])}")
 
 
 @bot.command(description="Clears all chat history for current channel")
