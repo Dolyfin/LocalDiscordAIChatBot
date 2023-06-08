@@ -28,11 +28,18 @@ To trigger image generation, user needs to send 1 word from first then second li
 1. cd to root folder ```*/LocalDiscordAIChatBot/```
 2. ```git pull https://github.com/Dolyfin/LocalDiscordAIChatBot```
 
-### Basic Config
-```/editconfig [setting] [value]```  
-Working setting chooices:   
-'chat_channel' (ID of channel)   
-'persona' (name of persona.json without.json).  
+## Basic Commands
+### ```/editconfig [setting] [value]```
+Available options:  
+"chat_channel": integer  
+"persona": string  
+"chat_enabled": boolean  
+"message_delay": integer  
+"message_reply": boolean  
+"message_reply_mention": boolean  
+"mention_reply": boolean  
+"image_enabled": boolean  
+"filter_enabled": boolean  
 
 ```/clearhistory```
 Clears chat history for current channel.  
@@ -40,7 +47,7 @@ Clears chat history for current channel.
 Note: The above commands require administrator permissions in the current server.  
 
 ```filter.txt```
-List of words to filter from the image prompt seperated by every line. You can start with: "https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/blob/master/en"
+List of words to filter from the image prompt separated by every line. You can start with: "https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/blob/master/en"
 ### Custom personas
 Copy ```persona/example.json``` template.
 ```json

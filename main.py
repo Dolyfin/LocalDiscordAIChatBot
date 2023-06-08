@@ -13,7 +13,6 @@ import api_hander
 bot = discord.Bot(intents=discord.Intents.all())
 dotenv.load_dotenv()
 
-
 cached_config_json = {}
 
 
