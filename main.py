@@ -152,7 +152,7 @@ async def editconfig(ctx, setting, value):
         await change_nickname(ctx.guild, persona_data['name'])
 
 
-@bot.command(description="Clears all chat history for current channel")
+@bot.command(description="Clears all chat history for current channel.")
 async def clearhistory(ctx):
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You are not an administrator of the server.")
@@ -161,7 +161,22 @@ async def clearhistory(ctx):
     await ctx.respond('Cleared.')
 
 
-@bot.command(description="A test command")
+@bot.command(description="Returns a list of all available personas.")
+async def personas(ctx):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You are not an administrator of the server.")
+        return
+    await ctx.defer()
+    persona_list = "Available personas: "
+    persona_directory = "persona"
+    for file in os.listdir(persona_directory):
+        if file.endswith(".json"):
+            persona_list = persona_list + "`" + file.removesuffix(".json") + "` "
+
+    await ctx.respond(persona_list)
+
+
+@bot.command(description="A test command.")
 async def testcmd(ctx, var):
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You are not an administrator of the server.")
@@ -170,12 +185,11 @@ async def testcmd(ctx, var):
     await ctx.respond(await filter_word_detector(var))
 
 
-@bot.command(description="A test command")
+@bot.command(description="Force exits the bot.")
 async def shutdownbot(ctx):
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You are not an administrator of the server.")
         return
-    await chat_handler.remove_oldest_message(ctx.channel_id)
     await ctx.respond(f"Bot shutting down...")
     exit()
 
