@@ -18,6 +18,10 @@ To trigger image generation, user needs to send 1 word from first then second li
 (send|draw|show|display|generate|give)  
 (image|picture|photo|drawing|art|artwork)  
 # Getting Started
+Download the latest working Release here:  
+https://github.com/Dolyfin/LocalDiscordAIChatBot/releases
+
+Alternativly clone the repo which may be broken:
 1. ```git clone https://github.com/Dolyfin/LocalDiscordAIChatBot```
 2. Run ```startbot.bat```
 3. Add discord bot token, API address and port into ```.env``` file.
@@ -90,8 +94,8 @@ Example persona for J.A.R.V.I.S:
   - Should recognize different users in conversation
 - Image generation  
   - Using chat LLM to generate image prompts
+  - Image generation word filter (filter.txt)
 # TODO:
-- Hard image generation filter (to remove nsfw image)
 - Implement chat experience when using @ mentions of the bot outside of chat channel.
 - TTS Voice generation  
 - Speech to text (Whisper)
