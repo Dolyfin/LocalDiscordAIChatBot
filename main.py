@@ -19,7 +19,6 @@ cached_config_json = {}
 def initialize():
     print("<!> Initializing bot...")
     config_handler.initialize_config()
-    config_handler.initialize_env()
     if not os.path.exists("filter.txt"):
         print(f"<?> 'filter.txt' not found. Creating new filter file.")
         with open("filter.txt", "w") as filter_file:

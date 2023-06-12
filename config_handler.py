@@ -136,3 +136,6 @@ async def load_persona(persona_name):
     except Exception as load_persona_error:
         print(f"<!> Failed to load persona: persona/{persona_name}.json")
         print(load_persona_error)
+
+
+initialize_env()
