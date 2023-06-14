@@ -124,7 +124,7 @@ async def on_message(message):
         result = await filter_word_detector(prompt_output)
         if result and cached_config_json[guild]['filter_enabled']:
             print(f"<?> Filter detected word ({result}) in prompt.")
-            await message.channel.send(f"```Image Filtered```")
+            await message.channel.send(f"`Image Filtered`")
         else:
             print(f"[=] #{message.channel} ({message.channel.id}) Image Gen: +({prompt_output}) -()")
             file_name = await api_hander.request_image_gen(message.channel.id, prompt_output, "")
