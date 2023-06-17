@@ -1,5 +1,4 @@
 import requests
-import json
 import dotenv
 import base64
 import io
@@ -95,9 +94,9 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
         "enable_hr": False,
         "prompt": pos_prompt,
         "seed": -1,
-        "sampler_name": "DPM++ 2M",
+        "sampler_name": "Euler a",
         "batch_size": 1,
-        "steps": 20,
+        "steps": 15,
         "cfg_scale": 7,
         "width": 512,
         "height": 512,

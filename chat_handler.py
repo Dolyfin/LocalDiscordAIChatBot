@@ -29,5 +29,5 @@ async def get_chat_history(channel_id):
 
 
 async def export_chat_histories():
-    with open('chat_history.json', 'w') as file:
+    with open('temp/chat_history.json', 'w') as file:
         json.dump(chat_histories, file, indent=4)

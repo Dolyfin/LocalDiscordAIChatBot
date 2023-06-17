@@ -8,7 +8,7 @@ from os import getenv
 
 import chat_handler
 import config_handler
-import api_hander
+import api_handler
 
 bot = discord.Bot(intents=discord.Intents.all())
 dotenv.load_dotenv()
@@ -108,7 +108,7 @@ async def on_message(message):
             continue
         await message.channel.trigger_typing()
         print(f"[+] #{message.channel} ({message.channel.id}) {message.author}: {message.content}")
-        response = await api_hander.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
+        response = await api_handler.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
         await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
         if cached_config_json[guild]['message_reply']:
             await message.reply(response, mention_author=cached_config_json[guild]['message_reply_mention'])
@@ -120,14 +120,14 @@ async def on_message(message):
             continue
         print(f"[?] Image generating...")
         await message.channel.trigger_typing()
-        prompt_output = await api_hander.request_sd_prompt(message.author, message.content, cached_config_json[guild]['persona'], response)
+        prompt_output = await api_handler.request_sd_prompt(message.author, message.content, cached_config_json[guild]['persona'], response)
         result = await filter_word_detector(prompt_output)
         if result and cached_config_json[guild]['filter_enabled']:
             print(f"<?> Filter detected word ({result}) in prompt.")
             await message.channel.send(f"`Image Filtered`")
         else:
             print(f"[=] #{message.channel} ({message.channel.id}) Image Gen: +({prompt_output}) -()")
-            file_name = await api_hander.request_image_gen(message.channel.id, prompt_output, "")
+            file_name = await api_handler.request_image_gen(message.channel.id, prompt_output, "")
 
             if file_name:
                 with open(f"temp/{file_name}", 'rb') as file_path:

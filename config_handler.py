@@ -16,7 +16,7 @@ configs_defaults = {
 }
 
 env_file_path = ".env"
-env_variables_list = ["DISCORD_BOT_TOKEN", "TEXT_GEN_IP", "TEXT_GEN_PORT", "IMAGE_GEN_IP", "IMAGE_GEN_PORT"]
+env_variables_list = ["DISCORD_BOT_TOKEN", "TEXT_GEN_IP", "TEXT_GEN_PORT", "IMAGE_GEN_IP", "IMAGE_GEN_PORT", "SPEECH_KEY", "SERVICE_REGION"]
 
 
 def initialize_env():
