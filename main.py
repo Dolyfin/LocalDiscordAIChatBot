@@ -9,12 +9,12 @@ from os import getenv
 import chat_handler
 import config_handler
 import api_handler
+import voice_handler
 
 bot = discord.Bot(intents=discord.Intents.all())
 dotenv.load_dotenv()
 
 cached_config_json = {}
-
 
 def initialize():
     print("<!> Initializing bot...")
@@ -108,6 +108,8 @@ async def on_message(message):
             continue
         await message.channel.trigger_typing()
         print(f"[+] #{message.channel} ({message.channel.id}) {message.author}: {message.content}")
+
+        # Generates the replies to the messages
         response = await api_handler.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
         await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
         if cached_config_json[guild]['message_reply']:
@@ -116,6 +118,21 @@ async def on_message(message):
             await message.channel.send(response)
         print(f"[=] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
 
+        # Generates speech if is in a voice channel
+        if message.guild.voice_client is not None:
+            vc = message.guild.voice_client
+            speech_file = await voice_handler.gen_speech(message.channel.id, response, -1, "en-US-AmberNeural")
+            audio_source = discord.FFmpegPCMAudio(f"temp/{speech_file}.mp3", executable='ffmpeg.exe', options="-hide_banner")  # I cant hide the Guess Channel Layout text
+            while True:
+                if vc.is_playing():
+                    await asyncio.sleep(0.5)
+                else:
+                    vc.play(audio_source)
+                    break
+        else:
+            print("Not in vc")
+
+        # Generates images if prompt is triggered
         if not await image_gen_trigger(message.content) or not cached_config_json[guild]['image_enabled']:
             continue
         print(f"[?] Image generating...")
@@ -178,11 +195,52 @@ async def personas(ctx):
 
 @bot.command(description="A test command.")
 async def testcmd(ctx, var):
-    if not ctx.author.guild_permissions.administrator:
-        await ctx.respond("You are not an administrator of the server.")
-        return
     await ctx.defer()
-    await ctx.respond(await filter_word_detector(var))
+
+    if ctx.author.voice is None:
+        await ctx.respond(f"You are not in a voice channel.")
+        return
+
+    if ctx.voice_client is not None:
+        if ctx.voice_client.channel != ctx.author.voice.channel:
+            await ctx.voice_client.move_to(ctx.author.voice.channel)
+        vc = ctx.voice_client
+    else:
+        vc = await ctx.author.voice.channel.connect()
+
+    await ctx.respond(f"Joining #{ctx.author.voice.channel}")
+
+    speech_file = await voice_handler.gen_speech(ctx.channel.id, var, -1, "en-US-AmberNeural")
+    audio_source = discord.FFmpegPCMAudio(f"temp/{speech_file}.mp3", executable='ffmpeg.exe', options="-hide_banner") # I cant hide the Guess Channel Layout text
+    vc.play(audio_source)
+
+
+@bot.command(description="Connect to the current voice channel")
+async def voice(ctx):
+    await ctx.defer()
+
+    if ctx.author.voice is None:
+        await ctx.respond(f"You are not in a voice channel.")
+        return
+
+    if ctx.voice_client is not None:
+        if ctx.voice_client.channel != ctx.author.voice.channel:
+            await ctx.voice_client.move_to(ctx.author.voice.channel)
+            await ctx.respond(f"Moving to #{ctx.author.voice.channel}")
+            return
+        await ctx.respond(f"Already in #{ctx.author.voice.channel}")
+    else:
+        await ctx.author.voice.channel.connect()
+        await ctx.respond(f"Joining #{ctx.author.voice.channel}")
+
+
+@bot.command(description="Disconnect from current voice channel")
+async def disconnect(ctx):
+    if ctx.voice_client is not None:
+        await ctx.voice_client.disconnect()
+        await ctx.respond(f"Disconnecting from #{ctx.channel}")
+    else:
+        await ctx.respond(f"I am not currently in a voice channel")
 
 
 @bot.command(description="Force exits the bot.")
