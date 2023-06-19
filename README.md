@@ -5,14 +5,18 @@ Disclaimer: I'm not the most experienced coder.
 ### Requires API from oobabooga/text-generation-webui for text generation.
 https://github.com/oobabooga/text-generation-webui (Recommended WizardLM-7B-Uncensored 4bit)
 
-### Requires API from AUTOMATIC1111/stable-diffusion-webui for image generation.
+### (Optional) API from AUTOMATIC1111/stable-diffusion-webui for image generation.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
+
+### (Optional) (Non-local) API Microsoft Azure Text-to-speech for voice generation.
+https://azure.microsoft.com/en-us/products/cognitive-services/text-to-speech/
 
 # Features
 Note: Still very in WIP and will break as I make commits.  
 
 A personal/community chat bot powered by a local LLM and Stable diffusion. The bot can have a customized personality config and send images.  
 Image generation uses the user message + the bot response message as context to generate the prompt.  
+Now supports voice generation when chatting though text.  
 
 To trigger image generation, user needs to send 1 word from first then second list:  
 (send|draw|show|display|generate|give)  
@@ -33,7 +37,7 @@ Alternativly clone the repo which may be broken:
 2. ```git pull https://github.com/Dolyfin/LocalDiscordAIChatBot```
 
 ## Basic Commands
-### ```/editconfig [setting] [value]```
+### ```/editconfig [setting] [value]``` (Admin)
 Available options:  
 "chat_channel": integer  
 "persona": string  
@@ -45,10 +49,14 @@ Available options:
 "image_enabled": boolean  
 "filter_enabled": boolean  
 
-```/clearhistory```
+### ```/clearhistory``` (Admin)
 Clears chat history for current channel.  
 
-Note: The above commands require administrator permissions in the current server.  
+### ```/voice```
+Connects to the current voice channel.
+
+### ```/disconnect```
+Disconnect from voice channel.
 
 ```filter.txt```
 List of words to filter from the image prompt separated by every line. You can start with: "https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/blob/master/en"
@@ -67,11 +75,11 @@ Copy ```persona/example.json``` template.
 ```
 Create new ```persona_name.json``` in ```persona/``` folder.  
 ### Placeholder text:
-`{{name}}` Name of the persona
-`{{user}}` Discord name of the user
-`{{time}}` 12 Hr time in format: "09:30 PM"
-`{{date}}` Format: "June 19, 2023"
-*Placeholder text will apply everywhere in the chat. Including user messages and bot replies, not just in the prompt.
+`{{name}}` Name of the persona  
+`{{user}}` Discord name of the user  
+`{{time}}` 12 Hr time in format: "09:30 PM"  
+`{{date}}` Format: "June 19, 2023"  
+*Placeholder text will apply everywhere in the chat. Including user messages and bot replies, not just in the prompt.  
 
 # Working:
 - Chat and response  
