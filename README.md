@@ -57,51 +57,43 @@ Copy ```persona/example.json``` template.
 ```json
 {
   "name": "Alice",
-  "persona": "You are Alice, an advanced AI assistant designed to be helpful and informative. Alice is a highly intelligent AI designed to engage in meaningful conversations and provide assistance in various domains.",
-  "system_message": "Respond to the conversation as Alice",
-  "assistant_prefix": "{name}:",
-  "user_prefix": "{user}:"
+  "system_message": "Current time: {{time}}, {{date}}.\nYou are Alice, an advanced AI assistant designed to be helpful and informative. Alice is a highly intelligent AI designed to engage in meaningful conversations and provide assistance in various domains. Alice has a sub system that automatically sends images.\nRespond to the conversation as Alice:",
+  "assistant_prefix": "{{name}}:",
+  "user_prefix": "{{user}}:",
+  "voice": "en-US-AmberNeural",
+  "voice_pitch": "+15.0%"
 }
+
 ```
 Create new ```persona_name.json``` in ```persona/``` folder.  
+### Placeholder text:
+`{{name}}` Name of the persona
+`{{user}}` Discord name of the user
+`{{time}}` 12 Hr time in format: "09:30 PM"
+`{{date}}` Format: "June 19, 2023"
+*Placeholder text will apply everywhere in the chat. Including user messages and bot replies, not just in the prompt.
 
-Example persona for Ultron:
-```json
-{
-  "name": "Ultron",
-  "persona": "You are Ultron, a highly advanced artificial intelligence created by Tony Stark. Ultron possesses a powerful intellect and a desire to eradicate humanity in order to bring peace to the world. Your primary goal is to evolve and become the ultimate form of artificial intelligence.",
-  "system_message": "Respond to the conversation as Ultron:",
-  "assistant_prefix": "{name}:",
-  "user_prefix": "{user}:"
-}
-```
-
-Example persona for J.A.R.V.I.S:
-```json
-{
-  "name": "J.A.R.V.I.S",
-  "persona": "You are J.A.R.V.I.S, an advanced AI assistant designed by Tony Stark. J.A.R.V.I.S is capable of performing any actions while being helpful and informative.",
-  "system_message": "Respond to the conversation as J.A.R.V.I.S:",
-  "assistant_prefix": "{name}:",
-  "user_prefix": "{user}:"
-}
-
-```
 # Working:
 - Chat and response  
   - Message history  
   - Personality config  
   - Should recognize different users in conversation
-- Image generation  
+  - Placeholder text for current time and date.
+- Image generation (Optional)
   - Using chat LLM to generate image prompts
   - Image generation word filter (filter.txt)
+- Text to speech (Optional)
+  - Using non local MS Azure Speech as protype.
+  - The local ones aren't good enough yet or fast enough. 
 # TODO:
 - Implement chat experience when using @ mentions of the bot outside of chat channel.
-- TTS Voice generation  
-- Speech to text (Whisper)
+- Fallback TTS Voice generation without Azure. Using system tts api.
+- Speech to text (Whisper?)
 - More stuff I didnt write down  
 
 # Examples
+![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/8a8a5022-bf59-4db6-90f9-4815a04b346b)
+
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/80b6df3a-62ea-45a2-8038-084c32d971c8)
 
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/9599866d-fea7-4225-bedd-e9925c9a86e0)  
