@@ -90,7 +90,7 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
-        result = result.replace(f"\n{user_name}:", "")
+        result = result.replace(f"\n{user_name}:", "").replace(f"\n{user_name.lower()}:", "")
         await chat_handler.add_message(channel_id, user_name, message_content)
         await chat_handler.add_message(channel_id, persona_data['name'], result)
         return result
