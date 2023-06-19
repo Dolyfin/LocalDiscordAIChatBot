@@ -3,6 +3,7 @@ import dotenv
 import base64
 import io
 import os
+from datetime import datetime
 from PIL import Image
 from os import getenv
 
@@ -31,19 +32,31 @@ async def auto_truncate_chat_history(channel_id, message_content, word_limit):
             break
 
 
+async def placeholder_parser(text, user_name, persona_data):
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%I:%M %p")
+    formatted_date = current_time.strftime("%B %d, %Y")
+
+    text = text.replace('{{user}}', user_name)
+    text = text.replace('{{name}}', persona_data['name'])
+    text = text.replace('{{time}}', formatted_time)
+    text = text.replace('{{date}}', formatted_date)
+    return text
+
+
 async def request_text_gen(channel_id, user_name, message_content, persona):
     await auto_truncate_chat_history(channel_id, message_content, 800)
 
     persona_data = await config_handler.load_persona(persona)
 
-    prompt = persona_data["persona"] + "\n"
-    prompt = prompt + persona_data["system_message"] + "\n"
+    prompt = persona_data["system_message"] + "\n"
 
     for chat_message in await chat_handler.get_chat_history(channel_id):
         prompt = prompt + chat_message['role'] + ":" + chat_message['content'] + "\n"
 
-    prompt = prompt + persona_data['user_prefix'].replace('{user}', user_name) + message_content + "\n"
-    prompt = prompt + persona_data['assistant_prefix'].replace('{name}', persona_data['name'])
+    prompt = prompt + persona_data['user_prefix'] + message_content + "\n"
+    prompt = prompt + persona_data['assistant_prefix']
+    prompt = await placeholder_parser(prompt, user_name, persona_data)
 
     request = {
         'prompt': prompt,

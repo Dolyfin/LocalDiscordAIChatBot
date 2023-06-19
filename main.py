@@ -16,6 +16,7 @@ dotenv.load_dotenv()
 
 cached_config_json = {}
 
+
 def initialize():
     print("<!> Initializing bot...")
     config_handler.initialize_config()
@@ -23,7 +24,6 @@ def initialize():
         print(f"<?> 'filter.txt' not found. Creating new filter file.")
         with open("filter.txt", "w") as filter_file:
             filter_file.write("naked\nnsfw\ngore\n")
-
 
 async def change_env_var(env_var, new_value):
     env_file_path = ".env"
@@ -107,8 +107,9 @@ async def on_message(message):
         if message.channel.id != cached_config_json[guild]['chat_channel'] or not cached_config_json[guild]['chat_enabled']:
             continue
         await message.channel.trigger_typing()
-        print(f"[+] #{message.channel} ({message.channel.id}) {message.author}: {message.content}")
+        print(f"[+] #{message.channel} {message.author}: {message.content}")
 
+        persona_data = await config_handler.load_persona(cached_config_json[str(message.guild.id)]['persona'])
         # Generates the replies to the messages
         response = await api_handler.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
         await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
@@ -116,39 +117,36 @@ async def on_message(message):
             await message.reply(response, mention_author=cached_config_json[guild]['message_reply_mention'])
         else:
             await message.channel.send(response)
-        print(f"[=] #{message.channel} ({message.channel.id}) {message.guild.me.name}: {response}")
+        print(f"[=] #{message.channel} {persona_data['name']}: {response}")
 
         # Generates speech if is in a voice channel
-        if message.guild.voice_client is not None:
+        if message.guild.voice_client is not None and await voice_handler.is_azure_speech_enabled():
             vc = message.guild.voice_client
-            speech_file = await voice_handler.gen_speech(message.channel.id, response, -1, "en-US-AmberNeural")
-            audio_source = discord.FFmpegPCMAudio(f"temp/{speech_file}.mp3", executable='ffmpeg.exe', options="-hide_banner")  # I cant hide the Guess Channel Layout text
+            speech_file = await voice_handler.azure_gen_speech(message.channel.id, response, persona_data)
+            audio_source = discord.FFmpegPCMAudio(f"temp/{speech_file}.mp3", executable='ffmpeg.exe', options="-loglevel error")
             while True:
                 if vc.is_playing():
                     await asyncio.sleep(0.5)
                 else:
                     vc.play(audio_source)
                     break
-        else:
-            print("Not in vc")
 
         # Generates images if prompt is triggered
-        if not await image_gen_trigger(message.content) or not cached_config_json[guild]['image_enabled']:
-            continue
-        print(f"[?] Image generating...")
-        await message.channel.trigger_typing()
-        prompt_output = await api_handler.request_sd_prompt(message.author, message.content, cached_config_json[guild]['persona'], response)
-        result = await filter_word_detector(prompt_output)
-        if result and cached_config_json[guild]['filter_enabled']:
-            print(f"<?> Filter detected word ({result}) in prompt.")
-            await message.channel.send(f"`Image Filtered`")
-        else:
-            print(f"[=] #{message.channel} ({message.channel.id}) Image Gen: +({prompt_output}) -()")
-            file_name = await api_handler.request_image_gen(message.channel.id, prompt_output, "")
+        if await image_gen_trigger(message.content) and cached_config_json[guild]['image_enabled']:
+            print(f"[?] Image generating...")
+            await message.channel.trigger_typing()
+            prompt_output = await api_handler.request_sd_prompt(message.author, message.content, cached_config_json[guild]['persona'], response)
+            result = await filter_word_detector(prompt_output)
+            if result and cached_config_json[guild]['filter_enabled']:
+                print(f"<?> Filter detected word ({result}) in prompt.")
+                await message.channel.send(f"`Image Filtered`")
+            else:
+                print(f"[=] #{message.channel} ({message.channel.id}) Image Gen: +({prompt_output}) -()")
+                file_name = await api_handler.request_image_gen(message.channel.id, prompt_output, "")
 
-            if file_name:
-                with open(f"temp/{file_name}", 'rb') as file_path:
-                    await message.channel.send(file=discord.File(file_path, 'image.jpg'))
+                if file_name:
+                    with open(f"temp/{file_name}", 'rb') as file_path:
+                        await message.channel.send(file=discord.File(file_path, 'image.jpg'))
 
 
 @bot.command(description="Change server settings.")
