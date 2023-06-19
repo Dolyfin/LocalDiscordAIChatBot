@@ -1,5 +1,6 @@
 # LocalDiscordAIChatBot
 Discord Chat bot powered by your own self hosted LLM and Image Generation.  
+A 7B LLaMA model and stable diffusion (512x512) can confortably fit in a 12GB RTX3060. Using ~9GB of VRAM.
 Disclaimer: I'm not the most experienced coder.
 
 ### Requires API from oobabooga/text-generation-webui for text generation.
@@ -31,6 +32,8 @@ Alternativly clone the repo which may be broken:
 3. Add discord bot token, API address and port into ```.env``` file.
 4. Run ```startbot.bat``` again.
 5. Use ```/editconfig chat_channel [channel id here]``` to select a chat channel.
+
+*Manually download ffmpeg.exe and place in root folder to allow for voice playback.
 
 ### Updating
 1. cd to root folder ```*/LocalDiscordAIChatBot/```
@@ -98,6 +101,13 @@ Create new ```persona_name.json``` in ```persona/``` folder.
 - Fallback TTS Voice generation without Azure. Using system tts api.
 - Speech to text (Whisper?)
 - More stuff I didnt write down  
+
+# Tips
+Models like WizardLM or models using the Vinuca 1.1 style seems best for chat generation. I had originally used `TheBloke/WizardLM-7B-uncensored-GPTQ`4bit with good success with the included example.json persona.  
+Tested models that should work: `WizardLM-7B-uncensored` `WizardLM-7B-V1.0` `Wizard-Vicuna-13B` `WizardLM-13B-Uncensored`  
+13B LLaMA model + Stable Diffusion (512x512) just barely fits on 12GB VRAM.  
+7B: 9.5 tokens/s  
+13B 5.5 tokens/s  
 
 # Examples
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/8a8a5022-bf59-4db6-90f9-4815a04b346b)
