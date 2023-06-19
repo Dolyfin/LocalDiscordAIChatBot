@@ -9,7 +9,6 @@ https://github.com/oobabooga/text-generation-webui (Recommended WizardLM-7B-Unce
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 ### (Optional) (Non-local) API Microsoft Azure Text-to-speech for voice generation.
-Need to download ffmpeg.exe and place in root folder for voice playback.
 https://azure.microsoft.com/en-us/products/cognitive-services/text-to-speech/
 
 # Features
@@ -32,6 +31,8 @@ Alternativly clone the repo which may be broken:
 3. Add discord bot token, API address and port into ```.env``` file.
 4. Run ```startbot.bat``` again.
 5. Use ```/editconfig chat_channel [channel id here]``` to select a chat channel.
+
+*Manually download ffmpeg.exe and place in root folder to allow for voice playback.
 
 ### Updating
 1. cd to root folder ```*/LocalDiscordAIChatBot/```
