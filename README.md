@@ -9,6 +9,7 @@ https://github.com/oobabooga/text-generation-webui (Recommended WizardLM-7B-Unce
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 ### (Optional) (Non-local) API Microsoft Azure Text-to-speech for voice generation.
+Need to download ffmpeg.exe and place in root folder for voice playback.
 https://azure.microsoft.com/en-us/products/cognitive-services/text-to-speech/
 
 # Features
