@@ -124,8 +124,6 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
             image = Image.open(io.BytesIO(base64.b64decode(i.split(",", 1)[0])))
             file_name = f"{channel_id}.jpg"
             file_path = f"temp/{file_name}"
-            if not os.path.exists("temp"):
-                os.makedirs("temp")
             image.save(file_path, "JPEG", quality=75, optimize=True, progressive=True)
             return file_name
     else:

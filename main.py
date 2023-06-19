@@ -24,6 +24,8 @@ def initialize():
         print(f"<?> 'filter.txt' not found. Creating new filter file.")
         with open("filter.txt", "w") as filter_file:
             filter_file.write("naked\nnsfw\ngore\n")
+    if not os.path.exists("temp"):
+        os.makedirs("temp")
 
 async def change_env_var(env_var, new_value):
     env_file_path = ".env"
