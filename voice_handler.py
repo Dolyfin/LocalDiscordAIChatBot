@@ -39,7 +39,7 @@ async def azure_gen_speech(channel_id, text_message, persona_data):
 
     speech_config = speechsdk.SpeechConfig(subscription=getenv('SPEECH_KEY'), region=getenv('SERVICE_REGION'))
     ssml_text = f'''
-    <speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
+    <speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="{persona_data["voice"][:5]}">
     <voice name="{persona_data["voice"]}">
     <prosody pitch="{persona_data["voice_pitch"]}">
     {text_message}
