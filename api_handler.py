@@ -134,7 +134,6 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
 
 
 async def request_sd_prompt(user_name, user_message, persona, bot_message):
-    # TODO: Take input message and get LLM to generate sd prompt
     persona_data = await config_handler.load_persona(persona)
     bot_name = persona_data['name']
     prompt = f'''

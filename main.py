@@ -55,12 +55,11 @@ async def image_gen_trigger(message):
 
     if first_word_match:
         first_word_index = first_word_match.end()
-        next_words = message[first_word_index:].split()[:5]
-        next_words_str = ' '.join(next_words)
-        second_word_match = re.search(second_word_patterns, next_words_str, re.IGNORECASE)
+        next_words_match = re.search(r'(\b\w+\W*){0,5}' + second_word_patterns, message[first_word_index:], re.IGNORECASE)
 
-        if second_word_match:
+        if next_words_match:
             return True
+
     return False
 
 
