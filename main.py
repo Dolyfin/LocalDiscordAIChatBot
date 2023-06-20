@@ -2,6 +2,7 @@ import discord
 import dotenv
 import traceback
 import asyncio
+import json
 import re
 import os
 from os import getenv
@@ -82,6 +83,22 @@ async def change_nickname(guild, name):
         await guild.me.edit(nick=name)
 
 
+async def chunkify(message):
+    MAX_MESSAGE_LENGTH = 1800
+    chunks = []
+    while len(message) > MAX_MESSAGE_LENGTH:
+        last_space = max(message[:MAX_MESSAGE_LENGTH].rfind(' '),
+                         message[:MAX_MESSAGE_LENGTH].rfind(','),
+                         message[:MAX_MESSAGE_LENGTH].rfind('\n'))
+        if last_space == -1:
+            last_space = MAX_MESSAGE_LENGTH
+        chunk = message[:last_space]
+        message = message[last_space:].lstrip()
+        chunks.append(chunk)
+    chunks.append(message)
+    return chunks
+
+
 @bot.event
 async def on_ready():
     print(f"<?> Bot connected to discord as {bot.user}!")
@@ -105,7 +122,7 @@ async def on_message(message):
         return
 
     for guild in cached_config_json:
-        if message.channel.id != cached_config_json[guild]['chat_channel'] or not cached_config_json[guild]['chat_enabled']:
+        if message.channel.id != cached_config_json[guild]['chat_channel'] or not cached_config_json[guild]['chat_enabled'] or message.content.startswith(cached_config_json[guild]['chat_ignore_prefix']):
             continue
         await message.channel.trigger_typing()
         print(f"[+] #{message.channel} {message.author}: {message.content}")
@@ -114,14 +131,18 @@ async def on_message(message):
         # Generates the replies to the messages
         response = await api_handler.request_text_gen(message.channel.id, message.author.name, message.content, cached_config_json[guild]['persona'])
         await asyncio.sleep(int(cached_config_json[guild]['message_delay']))
+        chunks = await chunkify(response)
         if cached_config_json[guild]['message_reply']:
-            await message.reply(response, mention_author=cached_config_json[guild]['message_reply_mention'])
+            for chunk in chunks:
+                await message.reply(chunk, mention_author=cached_config_json[guild]['message_reply_mention'])
         else:
-            await message.channel.send(response)
+            for chunk in chunks:
+                await message.channel.send(chunk)
         print(f"[=] #{message.channel} {persona_data['name']}: {response}")
 
         # Generates speech if is in a voice channel
         if message.guild.voice_client is not None and await voice_handler.is_azure_speech_enabled():
+            await message.channel.trigger_typing()
             vc = message.guild.voice_client
             speech_file = await voice_handler.azure_gen_speech(message.channel.id, response, persona_data)
             audio_source = discord.FFmpegPCMAudio(f"temp/{speech_file}.mp3", executable='ffmpeg.exe', options="-loglevel error")
@@ -134,6 +155,7 @@ async def on_message(message):
 
         # Generates images if prompt is triggered
         if await image_gen_trigger(message.content) and cached_config_json[guild]['image_enabled']:
+            await message.channel.trigger_typing()
             print(f"[?] Image generating...")
             await message.channel.trigger_typing()
             prompt_output = await api_handler.request_sd_prompt(message.author, message.content, cached_config_json[guild]['persona'], response)
@@ -148,6 +170,7 @@ async def on_message(message):
                 if file_name:
                     with open(f"temp/{file_name}", 'rb') as file_path:
                         await message.channel.send(file=discord.File(file_path, 'image.jpg'))
+        break
 
 
 @bot.command(description="Change server settings.")
@@ -195,23 +218,7 @@ async def personas(ctx):
 @bot.command(description="A test command.")
 async def testcmd(ctx, var):
     await ctx.defer()
-
-    if ctx.author.voice is None:
-        await ctx.respond(f"You are not in a voice channel.")
-        return
-
-    if ctx.voice_client is not None:
-        if ctx.voice_client.channel != ctx.author.voice.channel:
-            await ctx.voice_client.move_to(ctx.author.voice.channel)
-        vc = ctx.voice_client
-    else:
-        vc = await ctx.author.voice.channel.connect()
-
-    await ctx.respond(f"Joining #{ctx.author.voice.channel}")
-
-    speech_file = await voice_handler.gen_speech(ctx.channel.id, var, -1, "en-US-AmberNeural")
-    audio_source = discord.FFmpegPCMAudio(f"temp/{speech_file}.mp3", executable='ffmpeg.exe', options="-hide_banner") # I cant hide the Guess Channel Layout text
-    vc.play(audio_source)
+    ctx.respond("Pong")
 
 
 @bot.command(description="Connect to the current voice channel")
@@ -249,6 +256,34 @@ async def shutdownbot(ctx):
         return
     await ctx.respond(f"Bot shutting down...")
     exit()
+
+
+@bot.command(description="Returns the raw prompt for debugging in DMs")
+async def promptdebug(ctx, type):
+    await ctx.defer(ephemeral=True)
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You are not an administrator of the server.", ephemeral=True)
+        return
+
+    if type == "history":
+        json_history = await chat_handler.get_chat_history(ctx.channel.id)
+        formatted_json = json.dumps(json_history, indent=4)
+        if len(formatted_json) >= 1900:
+            print(f"=={type} debug==\n{formatted_json}")
+            await ctx.respond("JSON history over 2000 characters. See console output instead.", ephemeral=True)
+        else:
+            code_block = f"```json\n{formatted_json}\n```"
+            await ctx.respond(code_block, ephemeral=True)
+
+    elif type == "text" or type == "image":
+        last_debug_info = await api_handler.last_prompt_debug(type)
+        chunks = await chunkify(last_debug_info)
+        for chunk in chunks:
+            print(f"=={type} debug==\n{chunk}")
+            await ctx.respond(f"```{chunk}```", ephemeral=True)
+
+    else:
+        await ctx.respond("Type must be either 'text', 'image', or 'history'", ephemeral=True)
 
 
 initialize()

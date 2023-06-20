@@ -14,6 +14,9 @@ dotenv.load_dotenv()
 TEXT_API_ADDRESS = getenv('TEXT_GEN_IP') + ":" + getenv('TEXT_GEN_PORT')
 IMAGE_API_ADDRESS = getenv('IMAGE_GEN_IP') + ":" + getenv('IMAGE_GEN_PORT')
 
+text_prompt_debug = "none"
+image_prompt_debug = "none"
+
 
 async def auto_truncate_chat_history(channel_id, message_content, word_limit):
     removed_counter = 0
@@ -36,11 +39,13 @@ async def placeholder_parser(text, user_name, persona_data):
     current_time = datetime.now()
     formatted_time = current_time.strftime("%I:%M %p")
     formatted_date = current_time.strftime("%B %d, %Y")
+    formatted_day = current_time.strftime("%A")
 
     text = text.replace('{{user}}', user_name)
     text = text.replace('{{name}}', persona_data['name'])
     text = text.replace('{{time}}', formatted_time)
     text = text.replace('{{date}}', formatted_date)
+    text = text.replace('{{day}}', formatted_day)
     return text
 
 
@@ -93,6 +98,10 @@ async def request_text_gen(channel_id, user_name, message_content, persona):
         result = result.replace(f"\n{user_name}:", "").replace(f"\n{user_name.lower()}:", "")
         await chat_handler.add_message(channel_id, user_name, message_content)
         await chat_handler.add_message(channel_id, persona_data['name'], result)
+
+        global text_prompt_debug
+        text_prompt_debug = prompt + result
+
         return result
     elif response.status_code == 404:
         return "Not Found 404"
@@ -118,6 +127,7 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
         "negative_prompt": neg_prompt
     }
     response = requests.post(url=f'http://{IMAGE_API_ADDRESS}/sdapi/v1/txt2img', json=payload)
+
     if response.status_code == 200:
         response_json = response.json()
         for i in response_json['images']:
@@ -134,14 +144,11 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
 async def request_sd_prompt(user_name, user_message, persona, bot_message):
     persona_data = await config_handler.load_persona(persona)
     bot_name = persona_data['name']
-    prompt = f'''
-    You are a Image description generator. Based on the following message, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Do not use NSFW words. Separate descriptions with commas.
+    prompt = f'''You are a Image description generator. Based on the following messages, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Do not use NSFW words. Separate descriptions with commas.
 
-    "{user_name}: {user_message}"
-    "{bot_name}: {bot_message}"
-    ### Response:Image description: 
-    '''
-
+    "User: {user_message}"
+    "Assistant: {bot_message}"
+    ### Response:Image description: '''
     request = {
         'prompt': prompt,
         'max_new_tokens': 512,
@@ -172,12 +179,27 @@ async def request_sd_prompt(user_name, user_message, persona, bot_message):
 
     response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
 
+
+
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
         result = result.replace("\n", "")
         result = result.strip()
+
+        global image_prompt_debug
+        image_prompt_debug = prompt + result
+
         return result
     elif response.status_code == 404:
         return "Not Found 404"
     else:
         return str(response.status_code)
+
+
+async def last_prompt_debug(type):
+    if type.lower() == "text":
+        return text_prompt_debug
+    elif type.lower() == "image":
+        return image_prompt_debug
+    else:
+        return "Type must be either 'text' or 'image'"

@@ -12,7 +12,8 @@ configs_defaults = {
     "message_reply_mention": False,
     "mention_reply": True,
     "image_enabled": True,
-    "filter_enabled": True
+    "filter_enabled": True,
+    "chat_ignore_prefix": "!"
 }
 
 env_file_path = ".env"
