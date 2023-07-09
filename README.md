@@ -100,6 +100,10 @@ Create new ```persona_name.json``` in ```persona/``` folder.
 - Implement chat experience when using @ mentions of the bot outside of chat channel.
 - Fallback TTS Voice generation without Azure. Using system tts api.
 - Speech to text (Whisper?)
+- Optional openai api
+- Message grouping. Waiting x seconds to respond to all messages in that time instead of every message.
+- Casual conversation. A smart way to intergrate the bot to join and chat when prompted. (Need to figure out how to do this well)
+- Macos support. I just got a macbook.
 - More stuff I didnt write down  
 
 # Tips
