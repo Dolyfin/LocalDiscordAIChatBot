@@ -144,11 +144,11 @@ async def request_image_gen(channel_id, prompt, negative_prompt):
 async def request_sd_prompt(user_name, user_message, persona, bot_message):
     persona_data = await config_handler.load_persona(persona)
     bot_name = persona_data['name']
-    prompt = f'''You are a Image description generator. Based on the following messages, respond with a description of the users desired image in short key words. The description must mostly contain short and concise keywords. Add detail to the description for setting, theme and style. Do not use NSFW words. Separate descriptions with commas.
+    prompt = f'''You are a Image caption generator. Based on the following conversation, respond with a description of the users desired image in short key words. You may use Booru tags or short phrases. Include description for setting and style. Try not use NSFW words. Separate key descriptions or tags with commas.
 
     "User: {user_message}"
     "Assistant: {bot_message}"
-    ### Response:Image description: '''
+    ### Response:Image caption: '''
     request = {
         'prompt': prompt,
         'max_new_tokens': 512,
@@ -178,7 +178,6 @@ async def request_sd_prompt(user_name, user_message, persona, bot_message):
     }
 
     response = requests.post(f"http://{TEXT_API_ADDRESS}/api/v1/generate", json=request)
-
 
 
     if response.status_code == 200:
