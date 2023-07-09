@@ -107,7 +107,8 @@ Models like WizardLM or models using the Vinuca 1.1 style seems best for chat ge
 Tested models that should work: `WizardLM-7B-uncensored` `WizardLM-7B-V1.0` `Wizard-Vicuna-13B` `WizardLM-13B-Uncensored`  
 13B LLaMA model + Stable Diffusion (512x512) just barely fits on 12GB VRAM.  
 7B: 9.5 tokens/s  
-13B 5.5 tokens/s  
+13B 5.5 tokens/s   
+*Since exllamaa speed has been 2x+ faster.
 
 # Examples
 ![image](https://github.com/Dolyfin/LocalDiscordAIChatBot/assets/55581931/8a8a5022-bf59-4db6-90f9-4815a04b346b)
