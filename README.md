@@ -33,7 +33,7 @@ Alternativly clone the repo which may be broken:
 4. Run ```startbot.bat``` again.
 5. Use ```/editconfig chat_channel [channel id here]``` to select a chat channel.
 
-*Manually download ffmpeg.exe and place in root folder to allow for voice playback.
+*Optional for voice: Manually download ffmpeg.exe and place in root folder to allow for voice playback.
 
 ### Updating
 1. cd to root folder ```*/LocalDiscordAIChatBot/```
