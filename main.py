@@ -28,6 +28,7 @@ def initialize():
     if not os.path.exists("temp"):
         os.makedirs("temp")
 
+
 async def change_env_var(env_var, new_value):
     env_file_path = ".env"
     change_completed = False

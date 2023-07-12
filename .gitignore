@@ -9,3 +9,4 @@ temp/*
 .idea
 persona/*
 !persona/example.json
+*.exe
