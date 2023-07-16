@@ -104,6 +104,7 @@ Create new ```persona_name.json``` in ```persona/``` folder.
 - Message grouping. Waiting x seconds to respond to all messages in that time instead of every message.
 - Casual conversation. A smart way to intergrate the bot to join and chat when prompted. (Need to figure out how to do this well)
 - Macos support. I just got a macbook.
+- Local TTS. Silero seems to be good. Looking to implement https://github.com/ouoertheo/silero-api-server  
 - More stuff I didnt write down  
 
 # Tips
